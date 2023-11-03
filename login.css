@@ -1,0 +1,52 @@
+ body{
+    background-image : radial-gradient( ellipse at center, rgb(128, 216, 228) 0% , rgb(236, 208, 221) 100% );
+   text-align: center;
+   background-repeat: no-repeat;
+   background-size: 1370px 650px;
+   background-image:url("pic1.jpg"); }
+
+ 
+   html {
+    width: 100%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content: center;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color:burlywood(249%, 45%, 10%); }
+
+header{ 
+    
+    border-radius: 40px;
+    font-size:50px; 
+    
+}
+
+#main{
+width: 700px;
+height:64%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+background-image: radial-gradient( ellipse at center, rgb(163, 163, 119) 0% , rgb(83, 78, 128) 100% );
+border-radius: 40px;
+background-image:url("pic1.jpg"); }
+
+footer {
+    text-align: center;
+    padding: 3px;
+    background-image : radial-gradient( ellipse at center, rgb(83, 78, 128) 100% ,rgb(163, 163, 119) 0% );
+    border-radius: 40px; 
+    background-image:url("pic1.jpg");}
+     .deco{ 
+    width: 90%;
+    height:35px;
+    border-radius: 40px; 
+    font-size: 15px;
+    cursor: pointer;
+  
+    border: none; 
+    }
