@@ -1,0 +1,146 @@
+body {
+  padding-left: 400px;
+  background-color: rgb(212, 206, 198);
+  
+}
+.sidebar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  top: 0px;
+  background-color: rgb(255, 255, 255);
+  width: 200px;
+  z-index: 200;
+  padding-top: 5px;
+}
+.sidebar p {
+  padding: 10px 57px;
+  flex: 100px;
+  font-size:large;
+  letter-spacing: 4px;
+  color: black;
+}
+.sidebars {
+  margin-top: 60px;
+  cursor: pointer;
+  height: 74px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* ICONS OU LES PHRASES RAHOM 9DAM B3DAHOM */
+  flex-direction: column;
+}
+.sidebars:hover {
+  background-color: rgb(152, 148, 148);
+}
+/* to target all images in sidebars */
+.sidebars img {
+  height: 25px;
+  margin-bottom: 4px;
+}
+.sidebars div {
+  font-size: 18px ;
+  color: rgb(0, 0, 0);
+}
+.container{ 
+  width: 95%;
+  position: fixed;
+  margin: 50px auto;
+}
+.container h1 {
+  padding-left: 250px;
+}
+
+form{ 
+border-radius: 40px;
+padding: 20px;
+width: 600px;
+box-shadow: 0px 0px 15px 5px #dbddd5;
+}
+.container label {
+  font-size: large;
+}
+.container input {
+  padding: 8px 100px ;
+  margin-left: 20px;
+}
+.container select {
+  padding: 8px 100px ;
+  margin-left: 20px;
+}
+#taskdate {
+margin-left: 56px;
+}
+#tasktime {
+margin-left: 42px;
+}
+.itemswrap{ 
+display: block;
+margin :30px;
+}
+input[type="text"],
+textarea {
+width: 100%;
+padding: 10px 5px;
+margin: 10px 0;
+border: 1px solid #ccc;
+border-radius: 100px;
+}
+
+input {
+border: none;
+padding: 5px;
+border-radius: 5px;
+}
+select{
+border: none;
+padding: 5px;
+border-radius: 5px;
+}
+
+label {
+font-weight: bold;
+}
+
+.container button {
+  margin: 10px;
+  margin-left: 250px;
+  width: 100px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  color: white;
+  transition: background-color 1s, color 1s;
+}
+.container button:hover {
+  background-color: rgb(138, 99, 99);
+  color: #161616;
+  opacity: 0.7;
+}
+
+#tasklist {
+margin: 20px;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+}
+
+.task {
+background-color: #f3f0f3;
+border-radius: 20px;
+padding: 10px;
+margin: 20px;
+
+}
+
+.task span {
+font-weight: bold;
+}
+
+.task .delete {
+color: #e2b4c6;
+cursor: pointer;
+float: right;
+}
