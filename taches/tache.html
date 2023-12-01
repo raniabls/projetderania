@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="tache.css"/>
+    
+    <title> Les Taches</title>
+</head>
+
+
+<body>
+  
+     
+
+<nav class="sidebar">
+ <p class="plan"> Planify it</p>
+  <div class="sidebars">
+    <img src="pics.jpg/home.jpg"> 
+    <a class="calendrier" href="">Home </a> 
+  </div>
+
+  <div class="sidebars">
+      <img src="" class="img2"> 
+      <a class="calendrier" href="todo.html">Calendrier </a>
+  </div>
+  <div class="sidebars">
+      <img src=""> 
+      <a class="calendrier" href=""> Statistique</a> 
+      <HelloWorld> </HelloWorld>
+  </div>
+
+ 
+</nav>
+
+<div class="container">
+ <form action="" id="taskform">
+  <h1>  Les Tâches</h1>
+
+  <div class="itemswrap">
+    <label for="tasktitle">Titre: </label>
+    <input class="title" id="tasktitle" placeholder="Entrez le titre de votre tâche " required/>
+  </div>
+
+  <div class="itemswrap">
+    <label for="taskdate">Date: </label>
+    <input type="date" id="taskdate" required />
+  </div>
+
+  <div class="itemswrap">
+    <label for="tasktime"> Temps:</label>
+    <input type="time" id="tasktime" required>
+    </div>
+    
+  <div class="itemswrap">
+    <label for="taskcategorie"> Catégorie:</label>
+    <select name="Categorie" id="taskcategorie"> 
+      <option value="Etude"> Etude</option>
+      <option value="Travail"> Travail</option>
+      <option value="Sport"> Sport</option>
+      <option value="Loisir"> Loisir</option>
+      <option value="Loisir"> Rendez-vous </option>
+    </select>
+    </div>
+
+  <div class="itemswrap" id="app">
+  <label for="taskdetails"> Détails:</label>
+  <textarea name="" id="taskdetails" placeholder="Ecrivez les details de vos tache"> 
+  </textarea>
+  </div>
+
+  <button type="submit"> Ajouter tache</button>
+ </form>
+
+ <div id="tasklist"> </div>
+ </div>
+
+ <script src="tache.js"> </script>
+</body> 
+</html>
+
+
