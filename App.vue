@@ -1,144 +1,198 @@
 <template>
   <div id="app">
+    
     <nav class="sidebar">
       <p>Planify it</p>
       <div class="sidebars">
-      <img src="home2.jpg">
-      <div>Home</div>
-    </div>
-    <div class="sidebars">
-      <img src="calendar.jpg">
-      <a href="todo.html"> Calendrier</a>
-    </div>
-    <div class="sidebars">
-      <img src="stat3.jpg" >
-      <a href="todo.html"> Statistiques</a>
-    </div>
-    </nav>
-    <main>
-      <div class="container">
-        <form @submit.prevent="addTask">
-          <h1> Tâches notes</h1>
-     <div class="itemswrap">
-      <label for="taskdate">Titre: </label>
-      <input class="title" id="tasktitle" placeholder="Entrez le titre de votre tâche " required/>
-    </div>
-
-     <div class="itemswrap">
-       <label for="taskdate">Date: </label>
-       <input type="date" id="taskdate" required />
-     </div>
-   
-     <div class="itemswrap">
-       <label for="tasktime"> Temps:</label>
-       <input type="time" id="tasktime" required>
-      </div>
-    
-      
-      <div class="itemswrap">
-        <label for="taskcategorie"> Catégorie:</label>
-        <select name="Categorie" id="taskcategorie"> 
-          <option value="Etude"> Etude</option>
-          <option value="Travail"> Travail</option>
-          <option value="Sport"> Sport</option>
-          <option value="Loisir"> Loisir</option>
-      
-        </select>
-       </div>
-       <div class="itemswrap">
-        <label for="taskcolor">Couleur:</label>
-        <input type="color" id="taskcolor" name="taskcolor" value="#ff0000" >
+        <a href="App.vue"> Home</a>
         
       </div>
-   
-     <div class="itemswrap" id="app">
-     <label for="taskdetails"> Détails:</label>
-     <textarea name="" id="taskdetails" placeholder="Ecrivez les détails de votre tâche" > </textarea>
-      
-     </div>
-          <button type="submit"> Ajouter tache</button>
-        </form>
-        <div id="tasklist">
-      <!-- Liste des tâches Vue.js -->
-      <div v-for="(task, index) in tasks" :key="index" class="task" :style="{ backgroundColor: task.color }">
-        <h2>{{ task.title }}</h2>
-        <p>Date: {{ task.date }}</p>
-        <p>Temps: {{ task.time }}</p>
-        <p>Catégorie: {{ task.category }}</p>
-        <div v-if="task.details">
-          <h3>Détails:</h3>
-          
-          <ul>
-            <li v-for="(detail, detailIndex) in task.details.split('\n')" :key="detailIndex">{{ detail.trim() }}</li>
-          </ul>
+      <div class="sidebars">
+        
+        <a href="calendar.vue"> Calendrier</a>
+      </div>
+      <div class="sidebars">
+       
+        <router-link to="/HelloWorld.vue">Services</router-link>
+        
+      </div>
+    </nav>
+
+    <div class="container">
+      <form @submit.prevent="addTask" id="taskform">
+        <h1> Tâches notes</h1>
+        <div class="itemswrap">
+          <label for="tasktitle">Titre: </label> 
+          <input type="text" id="tasktitle" v-model="taskForm.titre" placeholder="Entrez le titre de votre tâche" required/>
         </div>
-        <!-- Ajoutez d'autres éléments de tâche selon vos besoins -->
-        <span class="delete-btn" @click="deleteTask(index)">Supprimer</span>
+
+        <div class="itemswrap">
+          <label for="taskdate">Date: </label>
+          <input type="date" id="taskdate" v-model="taskForm.date" required />
+        </div>
+      
+        <div class="itemswrap">
+          <label for="tasktime">Temps:</label>
+          <input type="time" id="tasktime" v-model="taskForm.time" required>
+        </div>
+        
+        <div class="itemswrap">
+          <label for="taskcategorie">Catégorie:</label>
+          <select name="Categorie" id="taskcategorie" v-model="taskForm.category"> 
+            <option value="Etude">Etude</option>
+            <option value="Travail">Travail</option>
+            <option value="Sport">Sport</option>
+            <option value="Loisir">Loisir</option>
+          </select>
+        </div>
+        
+        <div class="itemswrap">
+          <label for="taskcolor">Couleur:</label>
+          <input type="color" id="taskcolor" name="taskcolor" value="#ff0000" v-model="taskForm.color">
+        </div>
+        
+        <div class="itemswrap" id="app">
+          <label for="taskdetails">Détails:</label>
+          <textarea id="taskdetails" v-model="taskForm.details" placeholder="Ecrivez les détails de votre tâche"></textarea>
+        </div>
+        
+        <button type="submit">Ajouter tache</button>
+      </form>
+
+
+      <div id="tasklist">
+        <div v-for="(task, index) in tasks" :key="index" class="task" :style="{ backgroundColor: task.color }">
+          <div class="task-content">
+            <p v-if="!task.editing">Titre: {{ task.titre }}</p>
+
+            <p v-if="!task.editing">Date: {{ task.date }}</p>
+            <p v-if="!task.editing">Temps: {{ task.time }}</p>
+            <p v-if="!task.editing">Catégorie: {{ task.category }}</p>
+
+            <p v-if="task.details && !task.editingDetails"> Détails:</p>
+
+            <!--<div v-if="task.details && !task.editing && !task.editingDetails"> -->
+               <div v-if="task.details && !task.editingDetails"> 
+              <div class="checkbox-container" v-for="(line, lineIndex) in task.details.split('\n')" :key="lineIndex">
+                <input type="checkbox" />
+                <label>{{ line }}</label>
+                <span class="edit" @click="EditTask(index)">Modifier</span>
+              </div>
+              
+
+            </div>
+
+            <div v-else-if="!task.editingDetails">
+              <div class="checkbox-container" v-for="(line, lineIndex) in task.editedDetails.split('\n')" :key="lineIndex">
+                
+                  <input type="checkbox" />
+                 <label>{{ line }}</label>
+               </div>
+            </div>
+
+            <div v-if="task.editingDetails">
+            <textarea v-model="task.editedTaskDetails" placeholder="Modifier les détails" v-if="task.editingDetails"></textarea>
+            <span class="edit" @click="SaveDetails(index)">Enregistrer</span>
+            </div>
+           
+            <span class="Supprimer" @click="DeleteTask(index)">Supprimer</span>
+          
+          </div>
+        </div>
       </div>
     </div>
-    </div>
-    </main>
   </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
       tasks: [],
-      newTask: {
-        title: '',
+      taskForm: {
+        titre: '',
         date: '',
         time: '',
-        category: 'Etude',
+        category: '',
         color: '#ff0000',
-        details: ''
-      }
+        details: '',
+      },
     };
   },
+  
+  mounted() { //  permet Récupérer les tâches depuis le stockage local
+  this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+  },
+
   methods: {
     addTask() {
       // Ajouter la nouvelle tâche à la liste des tâches
-      this.tasks.push({
-        title: this.newTask.title,
-        date: this.newTask.date,
-        time: this.newTask.time,
-        category: this.newTask.category,
-        color: this.newTask.color,
-        details: this.newTask.details
-      });
+      const newTask = {
+  
+        titre: this.taskForm.titre,
+        date: this.taskForm.date,
+        time: this.taskForm.time,
+        category: this.taskForm.category,
+        color: this.taskForm.color,
+        details: this.taskForm.details,
+        editing: false,
+        editingDetails: false,
+        editedDetails: ''
+      };
 
+      this.tasks.push(newTask);
+
+      localStorage.setItem('tasks', JSON.stringify(this.tasks))
       // Réinitialiser le formulaire
-      this.newTask = {
-        title: '',
+      this.taskForm = {
+        titre: '',
         date: '',
         time: '',
-        category: 'Etude',
+        category: '',
         color: '#ff0000',
         details: ''
       };
-    }
-  }
+    },
+   
+    DeleteTask(index) {
+      // Supprime la tâche à l'index spécifié du tableau tasks
+      this.tasks.splice(index, 1);
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    },
+    EditTask(index) {
+      this.tasks[index].editing = true;
+      this.tasks[index].editingDetails =!this.tasks[index].editingDetails;
+      this.tasks[index].editingDetails = true;
+      this.tasks[index].editedTaskDetails = this.tasks[index].details;
+    },
+    SaveDetails(index) {
+      this.tasks[index].editingDetails = false;
+      // Mettre à jour les détails avec les modifications
+      this.tasks[index].details = this.tasks[index].editedTaskDetails;
+      this.tasks[index].editedDetails = '';
+      this.tasks[index].editing = false;
+      localStorage.setItem('tasks', JSON.stringify(this.tasks))
+    },
+},
 };
+
 </script>
 
 <style>
 html {
   background-image: radial-gradient(ellipse at center, rgb(226, 226, 184) 0%,rgb(151, 129, 129)100%);
-     width: 100%;
+  width: 50%;
      height:100%;
-     display: flex;
      flex-direction: column;
      align-items:center;
      justify-content: center;
-     margin: 0;
+     
      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    
     }
 
   body{
     text-align: center;
+    
   }
 
   p{ 
@@ -153,7 +207,7 @@ html {
     z-index: 1;
   }
   .sidebar{
-  position: fixed;
+  position:fixed;
   left: 0;
    top:0;
     bottom:0;
@@ -183,6 +237,11 @@ html {
     text-decoration: none;
     color: black;
   }
+  .itemswrap{ 
+  display: block;
+  margin :25px;
+  
+}
   .plan{
     font-size: 30px;
     letter-spacing: 1px;
@@ -214,13 +273,14 @@ justify-content: center;
 }
 form{ 
   border-radius: 40px;
-  padding: 20px;
-
-  margin-top: 45px;
-  width: 110%;
+  padding: 15px;
+  margin-top: 10px;
+  width: 95%;
+ height: 70%;
+ margin-left: 400px;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 0px 15px 5px #dbddd5;
+  box-shadow: 0px 0px 20px 10px #e7e5cb;
 }
 .container label {
   font-size: large;
@@ -236,10 +296,6 @@ form{
   margin-left: 60px;
  
 }
-.itemswrap{ 
-  display: block;
-  margin :25px;
-}
 
 input[type="text"],
 textarea {
@@ -247,7 +303,13 @@ textarea {
   padding: 10px 5px;
   margin: 10px 0;
   border: 1px solid #ccc;
-  border-radius: 100px;
+  border-radius: 5px;
+}
+input[type="text"],
+text{
+  border: none;
+  padding: 14px;
+  border-radius: 5px;
 }
 
 input {
@@ -277,22 +339,27 @@ button:hover {
 }
 
 #tasklist {
-  margin: 20px;
+margin: 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3,320px);
+  width: 100%;
+  margin-left: 300px;
+  
 }
 
 .task {
   background-color: #f3f0f3;
   border-radius: 20px;
-  padding: 10px;
+  
   margin: 20px;
+  
 }
 
 
 .task span {
   font-weight: bold;
-  display: block; 
+  display: block;
+
 }
 
 .task .Supprimer {
@@ -308,14 +375,17 @@ button:hover {
   margin-right: 10px; /*  une marge à droite pour l'espacement */
 }
 .task-content {
-  display: block;    /*yavait flex*/
+  display: flex;    /*yavait flex*/
   flex-direction: column;
+
+  
 }
 .task-content p {
   display: block;
   font-size: 15px;
   font-weight: bold;
   margin-left: 5px;
+ 
   margin: 5px 0; /* Ajoutez une marge pour l'espacement entre les paragraphes */
 }
 
@@ -338,3 +408,4 @@ button:hover {
 
 }
 </style>
+
