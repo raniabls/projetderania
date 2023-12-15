@@ -1,20 +1,15 @@
 <template>
   <div id="app">
-    
     <nav class="sidebar">
       <p>Planify it</p>
       <div class="sidebars">
-        <a href="App.vue"> Home</a>
-        
+        <a href="welcome.blade.php"> Home</a>
       </div>
       <div class="sidebars">
-        
-        <a href="calendar.vue"> Calendrier</a>
+        <a href="Calendar.blade.php"> Calendrier</a>
       </div>
       <div class="sidebars">
-       
-        <a href="services.vue"> Services</a>
-        
+        <a href="services.blade.php"> Services</a>
       </div>
     </nav>
 
@@ -39,6 +34,7 @@
         <div class="itemswrap">
           <label for="taskcategorie">Catégorie:</label>
           <select name="Categorie" id="taskcategorie" v-model="taskForm.category" required> 
+            <option value="Rendez-vous">Rendez-vous</option>
             <option value="Etude">Etude</option>
             <option value="Travail">Travail</option>
             <option value="Sport">Sport</option>
@@ -68,54 +64,59 @@
         
         <button type="submit">Ajouter tache</button>
       </form>
-
-
+      
       <div id="tasklist">
+        <!--index est une variable qui représente la position de l'élément actuel dans la liste lors de l'itération avec v-for-->
+        <!--on a creer une boucle pour chaque tâche dans la liste en utilisant l'index comme clé unique pour 
+          chaque élément dans la listes et il sera représenté par -->
         <div v-for="(task, index) in tasks" :key="index" class="task" :style="{ backgroundColor: task.color }">
           <div class="task-content">
+            <!--Si la tâche n'est pas en mode édition on affiche titre,date... -->
             <p v-if="!task.editing">Titre: {{ task.titre }}</p> 
             <p v-if="!task.editing">Date: {{ task.date }}</p>
             <p v-if="!task.editing">Temps: {{ task.time }}</p>
             <p v-if="!task.editing">Catégorie: {{ task.category }}</p>
-
+           <!-- Si la tâche n'est pas en mode édition on affiche etat et bouton editer etat-->
             <div  class= "priority" v-if="!task.editing">
               <p @click="EditPriority(index)">Priorité: {{ task.priority }}</p>
             </div>
-
+            <!-- Si letat est en mode édition on affiche select pout changer letat
+            et un bouton pour enregistrer les modifications-->
             <div v-if="task.editingPriority">
-             <label for="taskpriority"></label>
-             <select name="Priority" id="taskpriority" v-model="task.editedPriority">
-             <option value="Pas commencer">Pas commencer</option>
-             <option value="En cours">En cours</option>
-             <option value="Terminée">Terminée</option>
+              <label for="taskpriority"></label>
+             <select  class="priorite" name="Priority" id="taskpriority" v-model="task.editedPriority">
+             <option value="Pas commencer" class="option">Pas commencer</option>
+             <option value="En cours" class="option">En cours</option>
+             <option value="Terminée" class="option">Terminée</option>
              </select>
              <span class="edit" @click="SavePriority(index)">Enregistrer</span>
             </div>
-            <p v-if="task.details && !task.editingDetails"> Détails:</p>
 
-            <!--<div v-if="task.details && !task.editing && !task.editingDetails"> -->
+            <p v-if="task.details && !task.editingDetails"> Détails:</p>
+            <!--Si la tâche a des détails (qui sont string) et n'est pas en mode édition affiche les détails sous forme de checkbox-->
               <div v-if="task.details && typeof task.details === 'string' && !task.editingDetails">
+               <!-- v-for qui itère sur chaque ligne des détails de la tache
+               split('\n') est utilisée pour diviser les détails en un tableau de lignes en fonction des sauts de ligne ('\n')
+                Chaque ligne est ensuite rendur checkbox -->
               <div class="checkbox-container" v-for="(line, lineIndex) in task.details.split('\n')" :key="lineIndex">
                 <input type="checkbox" />
                 <label>{{ line }}</label>
               </div>
               <span class="edit" @click="EditTask(index)">Modifier</span>
             </div>
-            
-
-            <div v-else-if="!task.editingDetails">
+          
+            <div v-else-if="!task.editingDetails"> <!-- de la version modifie si elle existe -->
               <div class="checkbox-container" v-for="(line, lineIndex) in task.editedDetails.split('\n')" :key="lineIndex">
-                
                   <input type="checkbox" />
                  <label>{{ line }}</label>
                </div>
             </div>
-
+           <!--Si les détails sont en mode édition affiche affiche textarea pour moodifer et bouton enregistrer-->
             <div v-if="task.editingDetails">
             <textarea v-model="task.editedTaskDetails" placeholder="Modifier les détails" v-if="task.editingDetails"></textarea>
             <span class="edit" @click="SaveDetails(index)">Enregistrer</span>
             </div>
-            
+           <!-- a chaque fois quon clique sur supprimer deletetask est appele -->
             <span class="Supprimer" @click="DeleteTask(index)">Supprimer</span>
             
           </div>
@@ -127,9 +128,12 @@
 
 <script>
 export default {
+  // data est utilise pour définir les données du code
   data() {
     return {
       tasks: [],
+      //taskform cest un objet qui représente le formulaire avec des propriétés qui coresepondent aux champs de form
+      //Lorsquon remplit le formulaire et soumet une nouvelle tâche les valeurs entrées sont stockées dans this.taskForm
       taskForm: {
         titre: '',
         date: '',
@@ -142,35 +146,33 @@ export default {
     };
   },
   
-  mounted() { //  permet Récupérer les tâches depuis le stockage local
-  this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+  mounted() {
+    //  permet Récupérer les tâches depuis le stockage local et les assigner à tasks
+  this.tasks = JSON.parse(localStorage.getItem('tasks')) || []; // Mettre à jour le stockage local apres avoir ajouter une tache
   },
 
   methods: {
     addTask() {
-      // Ajouter la nouvelle tâche à la liste des tâches
+    // on cree un nouveau objet représentant une nouvelle tâche en utilisant les valeurs acteuls du formulaire
       const newTask = {
-  
-        titre: this.taskForm.titre,
+        titre: this.taskForm.titre, //Copie la valeur du champ "titre" du (taskForm) dans la propriété titre de la nouvelle tâche.
         date: this.taskForm.date,
         time: this.taskForm.time,
         category: this.taskForm.category,
         priority: this.taskForm.priority,
         color: this.taskForm.color,
         details: this.taskForm.details,
-        editing: false,
-        editingDetails: false,
-        editedDetails: '' ,
-        editingPriority: false,
+        editing: false, //propriete utilisée pour suivre si une tâche est en cours d'édition
+        editingDetails: false, //propriete utilisée pour suivre si les details sont en cours d'édition
+        editedDetails: '' , // variable pour stocker les modifications des détails d'une tâche pendant l'édition
+        editingPriority: false, ////propriete utilisée pour suivre si letat de la tache est en cours d'édition
         editedPriority: '',
       };
+      this.tasks.push(newTask); //on utilise la méthode push pour ajouter l'objet newTask a la liste des taches (tasks) et afficher la tache
+      localStorage.setItem('tasks', JSON.stringify(this.tasks)) // Mettre à jour le stockage local
 
-      // une vérification pour voir si la tâche nécessite une notification
-     this.checkTaskForNotification(newTask);
-      this.tasks.push(newTask);
-
-      localStorage.setItem('tasks', JSON.stringify(this.tasks))
-      // Réinitialiser le formulaire
+      // Réinitialisation du formulaire (taskform) a chaque fois quon fini dajouter 
+      // pour etre prêt pour l'ajout de la prochaine tâche
       this.taskForm = {
         titre: '',
         date: '',
@@ -181,78 +183,42 @@ export default {
         details: ''
       };
     },
-   
-    checkTaskForNotification(task) {
-    // Récupérez la date et l'heure actuelles
-    const currentDate = new Date();
-    const currentDateString = currentDate.toISOString().split('T')[0];
-    const currentTimeString = currentDate.toTimeString().split(' ')[0];
-
-    // Comparez avec la date et l'heure de la tâche
-    if (task.date === currentDateString && task.time === currentTimeString) {
-      // Affichez la notification
-      this.showNotification('Rappel', 'Il est temps pour votre tâche: ' + task.titre);
-    }
-  },
-  
-  showNotification(message) {
-      if (window.Notification && Notification.permission === "granted") {
-        new Notification("Notification", {
-          body: message,
-        });
-      } else if (window.Notification && Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            new Notification("Notification", {
-              body: message,
-            });
-          }
-        });
-      }
-    },
- 
+    //index est une variable qui représente la position de l'élément actuel dans la liste lors de l'itération avec v-for, 
+    //et elle est utilisée pour effectuer des opérations spécifiques sur des éléments de la liste.
+   // l'index est utilisé pour savoir quelle tâche doit être supprimer,editer,saver de la liste
     DeleteTask(index) {
       // Supprime la tâche à l'index spécifié du tableau tasks
       this.tasks.splice(index, 1);
-      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      localStorage.setItem('tasks', JSON.stringify(this.tasks)); //pour supprimer la tache definitivement 
    },
 
-   
     EditTask(index) {
-      this.tasks[index].editing = true;
-      this.tasks[index].editingDetails =!this.tasks[index].editingDetails;
+      this.tasks[index].editing = true; //activer ledition de la tache
       this.tasks[index].editingDetails = true;
-      this.tasks[index].editedTaskDetails = this.tasks[index].details;
+      this.tasks[index].editedTaskDetails = this.tasks[index].details; //initialise editedTaskDetails avec les détails actuels de la tâche
     },
 
     SaveDetails(index) {
-      this.tasks[index].editingDetails = false;
-      // Mettre à jour les détails avec les modifications
-      this.tasks[index].details = this.tasks[index].editedTaskDetails;
-      this.tasks[index].editedDetails = '';
+      this.tasks[index].editingDetails = false; //desactiver ledition pour quon puisse sauvegarder
+      this.tasks[index].details = this.tasks[index].editedTaskDetails; // remplacer les details par les nouveaux details
+      this.tasks[index].editedDetails = ''; // réinitialiser à une chaîne vide,
       this.tasks[index].editing = false;
-      localStorage.setItem('tasks', JSON.stringify(this.tasks))
+      localStorage.setItem('tasks', JSON.stringify(this.tasks)) // pour sauvegarder la modification des details 
     },
 
     EditPriority(index) {
-      // Activer l'édition de la priorité
-      this.tasks[index].editingPriority = true;
-      this.tasks[index].editedPriority = this.tasks[index].priority;
+      this.tasks[index].editingPriority = true;  // Activer l'édition de la priorité
+      this.tasks[index].editedPriority = this.tasks[index].priority; //initialise edited avec letat actuel de la tâche
    },
 
    SavePriority(index) {
-      // Désactiver l'édition de la priorité
-      this.tasks[index].editingPriority = false;
-      // Mettez à jour la priorité avec les modifications
-      this.tasks[index].priority = this.tasks[index].editedPriority;
-      this.tasks[index].editedPriority = '';
-      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      this.tasks[index].editingPriority = false; // Désactiver l'édition de la priorité
+      this.tasks[index].priority = this.tasks[index].editedPriority; //remplacer par les modifcations
+      this.tasks[index].editedPriority = ''; // réinitialiser à une chaîne vide,
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));  // pour sauvegarder la modification de letat quand on fait refresh
    },
   }
 };
-
-
-
 </script>
 
 <style>
@@ -263,15 +229,12 @@ html {
      flex-direction: column;
      align-items:center;
      justify-content: center;
-     
      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
   body{
     text-align: center;
-    
   }
-
   p{ 
     text-align: center;
     font-size: 20px;
@@ -424,7 +387,6 @@ margin: 0;
   margin-left: 300px;
   
 }
-
 .task {
   background-color: #f3f0f3;
   border-radius: 20px;
@@ -436,7 +398,6 @@ margin: 0;
   display: block;
 
 }
-
 .task .Supprimer{
   color: black;
   cursor: pointer;
@@ -444,7 +405,7 @@ margin: 0;
   margin-left: 180px;
 }
 .task .Supprimer:hover{
-  background-color: #e2b4c6;
+  background-color: rgb(226, 226, 184);
 }
 
 .task .edit {
@@ -454,7 +415,7 @@ margin: 0;
   margin-right: 10px;
 }
 .task .edit:hover{
-  background-color: #e2b4c6;
+  background-color: rgb(226, 226, 184);
 }
 .task-content {
   display: flex;    /*yavait flex*/
@@ -466,14 +427,12 @@ margin: 0;
   font-size: 15px;
   font-weight: bold;
   margin-left: 5px;
-  margin: 5px 0; /* Ajoutez une marge pour l'espacement entre les paragraphes */
+  margin: 5px 0; /* une marge pour l'espacement entre les paragraphes */
 }
 
 .checkbox-container {
   display: block;     /*yavait flex*/
   align-items: center;
-  
-  /* Ajoutez une marge en bas pour l'espacement entre les checkboxes */
 }
 
 .checkbox-container label {
@@ -485,12 +444,21 @@ margin: 0;
 }
 #taskcolor{
   padding: 0%;
-
 }
-.priority{
-  width: 100%;
+.priorite{
+  width: 0;
+  height: 0%;
+  z-index: 1; 
+}
+.option{
+  text-align: left;
+  align-items: left;
+  justify-content: left;
+  display: block;
+  z-index: 1;
+  
 }
 .priority:hover{
-background-color: #e2b4c6;
+background-color: rgb(226, 226, 184);
 }
 </style>
